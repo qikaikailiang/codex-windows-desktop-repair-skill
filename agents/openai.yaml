@@ -1,0 +1,8 @@
+interface:
+  display_name: "Codex Windows 桌面修复与持久化"
+  short_description: "修复并持久化 Windows 上的 Codex Desktop 补丁、插件市场、Goal 和 Computer Use。"
+  brand_color: "#2563EB"
+  default_prompt: "使用 $codex-windows-desktop-repair 修复并持久化 Windows 上的 Codex Desktop。"
+
+policy:
+  allow_implicit_invocation: true
