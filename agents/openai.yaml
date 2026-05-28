@@ -1,8 +1,8 @@
 interface:
-  display_name: "Codex Windows 桌面修复与持久化"
-  short_description: "修复并持久化 Windows 上的 Codex Desktop 补丁、插件市场、Goal 和 Computer Use。"
+  display_name: "Codex API 接入修复插件"
+  short_description: "修复 Windows Codex Desktop 的 API 接入、Fast Mode、插件市场、Goal、Computer Use 和插件安装持久化。"
   brand_color: "#2563EB"
-  default_prompt: "使用 $codex-windows-desktop-repair 修复并持久化 Windows 上的 Codex Desktop。"
+  default_prompt: "使用 $codex-api-access-repair-plugin 修复 Windows 上的 Codex API 接入、Fast Mode、插件市场和 Computer Use。"
 
 policy:
   allow_implicit_invocation: true

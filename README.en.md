@@ -1,31 +1,34 @@
-# Codex Windows Desktop Repair and Persistence Skill
+# Codex API Access Repair Plugin
 
 [中文](README.md) | English
 
-This is a Chinese-first enhanced Codex skill for repairing and persisting Codex Desktop behavior on Windows. It focuses on real recovery symptoms rather than only the original Fast Mode patch flow.
+**A persistence-focused repair plugin for Codex Desktop API access and plugin capabilities on Windows.**
 
-## What It Covers
+Use it when Codex Desktop loses Fast Mode, plugin marketplace access, Goal, Computer Use, Chrome plugin installation, or local marketplace persistence after upgrades or restarts.
 
-- Repatching Codex Desktop MSIX packages after Store upgrades.
-- Verifying Fast Mode through the actual `service_tier=priority` request wire.
-- Restoring plugin marketplace visibility and local marketplace layout.
-- Persisting a stable `openai-bundled-local` marketplace.
-- Keeping Goal and Computer Use feature flags enabled.
-- Installing and enabling `computer-use@openai-bundled-local`.
-- Repairing locked Chrome plugin cache directories before reinstalling Chrome.
+## What It Fixes
+
+- Codex Desktop Fast Mode and `service_tier=priority` request verification.
+- Codex API access behavior after Windows Store / MSIX upgrades.
+- Plugin marketplace visibility and local marketplace layout.
+- Stable `openai-bundled-local` marketplace persistence.
+- Goal and Computer Use feature flags.
+- `computer-use@openai-bundled-local` installation and enablement.
+- Chrome plugin install failures caused by locked plugin cache directories.
+- Hidden or unavailable `Any App` / Computer Control settings.
 
 ## Skill Name
 
-The machine-readable skill name is:
+Machine-readable name:
 
 ```text
-codex-windows-desktop-repair
+codex-api-access-repair-plugin
 ```
 
-The Chinese display name is:
+Display name:
 
 ```text
-Codex Windows 桌面修复与持久化
+Codex API 接入修复插件
 ```
 
 ## Main Commands
@@ -33,29 +36,23 @@ Codex Windows 桌面修复与持久化
 Dry run after an upgrade:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\repatch-codex-windows.ps1" -DryRun
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\repatch-codex-windows.ps1" -DryRun
 ```
 
-Full repair:
+Full API access and desktop capability repair:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\repatch-codex-windows.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\repatch-codex-windows.ps1"
 ```
 
-Persist desktop state:
+Persist repaired state:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\persist-codex-desktop-state.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\persist-codex-desktop-state.ps1"
 ```
 
 Repair Chrome plugin cache locks:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\persist-codex-desktop-state.ps1" -RepairChromeCache
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\persist-codex-desktop-state.ps1" -RepairChromeCache
 ```
-
-## Project Focus
-
-This skill targets complete Codex Desktop repair and persistence on Windows. It covers MSIX patch recovery after upgrades, plugin marketplace repair, Goal, Computer Use, Chrome plugin cache failures, and configuration loss after restarts.
-
-The default workflow treats persistence as part of the repair path. After patching, it verifies and rewrites the stable `openai-bundled-local` marketplace, `computer-use@openai-bundled-local`, Goal/Computer Use feature flags, and the related user environment variable.

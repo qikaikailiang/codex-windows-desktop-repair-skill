@@ -1,6 +1,6 @@
-# Windows Codex Desktop 排障速查
+# Codex API 接入修复排障速查
 
-这份速查表用于配合 `codex-windows-desktop-repair` skill 使用。
+这份速查表用于配合 `codex-api-access-repair-plugin` skill 使用，目标是修复 Windows Codex Desktop 的 API 接入、Fast Mode、插件市场、Goal、Computer Use 和插件安装持久化问题。
 
 ## 1. 重启后插件或 Computer Use 消失
 
@@ -12,7 +12,7 @@
 处理命令：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\persist-codex-desktop-state.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\persist-codex-desktop-state.ps1"
 ```
 
 验证点：
@@ -41,7 +41,7 @@ computer-use@openai-bundled-local (installed, enabled)
 处理命令：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\persist-codex-desktop-state.ps1" -RepairChromeCache
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\persist-codex-desktop-state.ps1" -RepairChromeCache
 ```
 
 处理后重新从插件市场安装 Chrome。
@@ -56,7 +56,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\ski
 处理命令：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\persist-codex-desktop-state.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\persist-codex-desktop-state.ps1"
 ```
 
 然后完全关闭并重新打开 Codex Desktop。

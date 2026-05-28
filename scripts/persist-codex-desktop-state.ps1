@@ -6,7 +6,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$LogPrefix = '[codex-windows-desktop-repair:persist]'
+$LogPrefix = '[codex-api-access-repair-plugin:persist]'
 
 function Write-Log {
   param([string]$Message)
@@ -142,7 +142,7 @@ function Ensure-ComputerUseSource {
     return $source
   }
 
-  $installer = Join-Path $CodexHomeResolved 'skills\codex-windows-desktop-repair\scripts\install-computer-use-local.ps1'
+  $installer = Join-Path $CodexHomeResolved 'skills\codex-api-access-repair-plugin\scripts\install-computer-use-local.ps1'
   if (Test-Path -LiteralPath $installer -PathType Leaf) {
     Write-Log 'running Computer Use local installer'
     powershell -NoProfile -ExecutionPolicy Bypass -File $installer | Out-Host

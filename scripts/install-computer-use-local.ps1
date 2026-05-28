@@ -185,7 +185,7 @@ description: Local Windows Computer Use compatibility helper for Codex Desktop. 
 
 # Computer Use
 
-This local compatibility plugin is installed by the codex-windows-desktop-repair skill. It supplies the Windows helper transport paths that Codex Desktop resolves for Computer Use.
+This local compatibility plugin is installed by the codex-api-access-repair-plugin skill. It supplies the Windows helper transport paths that Codex Desktop resolves for Computer Use.
 
 The Desktop app must be launched with `CODEX_ELECTRON_ENABLE_WINDOWS_COMPUTER_USE=1`. The installer writes that as a user environment variable, so restart Codex after installation.
 '@

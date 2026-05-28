@@ -1,31 +1,50 @@
 ---
-name: codex-windows-desktop-repair
-description: Use when Windows 上的 Codex Desktop 在升级、重启、MSIX 重签名、插件缓存锁定后，出现 Fast Mode、插件市场、Goal、Computer Use 或 Chrome 插件安装不可用。
+name: codex-api-access-repair-plugin
+description: Use when Windows 上的 Codex Desktop 因升级、重启、MSIX 重签名、插件市场异常、API 接入配置或缓存锁定，导致 Fast Mode、Codex API 接入、插件市场、Goal、Computer Use 或 Chrome 插件不可用。
 ---
 
-# Codex Windows 桌面修复与持久化
+# Codex API 接入修复插件
 
-这是一个中文优先的 Windows Codex Desktop 修复 skill。它不是只做一次性补丁，而是按“先诊断、再修复、最后持久化”的顺序处理 Fast Mode、插件市场、Goal、Computer Use、Chrome 插件缓存和本地 marketplace 配置。
+这个 skill 的作用很明确：修复 Windows 上 Codex Desktop 的 API 接入、Fast Mode、插件市场、Goal、Computer Use 和插件安装能力，并把修复后的状态持久化，避免重启或升级后再次丢失。
 
-## 适用场景
+它适合公开给其他人使用，因为它不是只处理单个按钮或单个补丁，而是把 Codex Desktop 在 Windows 上常见的“接入不稳定、插件不可用、配置不持久”问题整理成一套可复用的修复流程。
 
-- Codex Desktop 自动升级后，Fast Mode、插件入口、Goal 或 Computer Use 消失。
-- 重启 Codex Desktop 后，本地插件市场或 Computer Use 状态掉回默认。
-- 插件市场能打开，但安装 Chrome 等插件时提示安装失败、拒绝访问或缓存目录被占用。
-- Computer Control 里 `Any App` / `任意应用` 被隐藏、灰掉，或者提示组织/地区不可用。
-- 已经打过 MSIX 补丁，但想确认 `service_tier=priority` 是否真的发出。
+## 它解决什么问题
+
+- Codex Desktop 升级后，Fast Mode、插件入口、Goal 或 Computer Use 消失。
+- Codex API 接入链路不稳定，Fast Mode 看起来打开了但不确定是否真的发送 `service_tier=priority`。
+- 插件市场能打开，但 Chrome 等插件安装失败、拒绝访问或缓存目录被占用。
+- 重启后本地插件市场、Computer Use 或 Goal 状态掉回默认。
+- Computer Control 里的 `Any App` / `任意应用` 被隐藏、灰掉，或提示组织/地区不可用。
+- 本地 marketplace 清单结构不兼容，导致 `codex plugin list` 报 snapshot 加载失败。
+
+## 公开定位
+
+**一句话说明：这是一个用于修复 Windows Codex Desktop API 接入和插件能力的持久化修复插件。**
+
+面向用户：
+
+- 不懂 MSIX、ASAR、marketplace 结构的人，可以按故障现象运行命令。
+- 已经打过补丁的人，可以用它验证和持久化当前状态。
+- 遇到插件市场、Goal、Computer Use、Chrome 安装失败的人，可以用它直接排障。
+
+面向维护者：
+
+- 补丁脚本负责 MSIX repack、签名、安装和 Fast Mode wire verification。
+- 持久化脚本负责 `openai-bundled-local`、Computer Use、Goal、环境变量和插件缓存修复。
+- 文档按故障现象组织，方便公开仓库首页直接说明用途。
 
 ## 总原则
 
-- 不直接改 `C:\Program Files\WindowsApps` 里的已安装文件，除非用户明确要求并理解风险。
-- 每次 Store 升级后先 dry run，再执行完整 repatch。
-- 每次 repatch、重启、插件异常后都运行持久化脚本。
-- 本地增强内容优先落到 `openai-bundled-local`，不要和 Desktop 自动重写的 `openai-bundled` 对抗。
-- Fast Mode 只以抓到 `/v1/responses` WebSocket 请求里的 `service_tier=priority` 为准。
+- 不直接修改 `C:\Program Files\WindowsApps` 中的已安装文件，优先使用 MSIX repack。
+- Fast Mode 是否生效，只以请求里实际出现 `service_tier=priority` 为准。
+- 本地增强内容写入稳定的 `openai-bundled-local`，不要和 Desktop 自动重写的 `openai-bundled` 对抗。
+- 每次升级、重启、插件异常后，都可以重新运行持久化脚本。
+- 修复完成后必须验证 feature flags、plugin list 和 Computer Use helper。
 
-## 快速入口
+## 快速修复
 
-查看当前安装状态：
+查看当前 Codex Desktop 安装状态：
 
 ```powershell
 Get-AppxPackage -Name OpenAI.Codex | Select-Object Name,PackageFullName,Version,SignatureKind,InstallLocation
@@ -34,38 +53,38 @@ Get-AppxPackage -Name OpenAI.Codex | Select-Object Name,PackageFullName,Version,
 升级后先做补丁目标检查：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\repatch-codex-windows.ps1" -DryRun
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\repatch-codex-windows.ps1" -DryRun
 ```
 
-执行完整修复：
+执行完整 API 接入与桌面能力修复：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\repatch-codex-windows.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\repatch-codex-windows.ps1"
 ```
 
 执行持久化修复：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\persist-codex-desktop-state.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\persist-codex-desktop-state.ps1"
 ```
 
-## 决策流程
+## 故障速查
 
 | 现象 | 先做什么 | 然后做什么 |
 | --- | --- | --- |
-| Store 升级后功能消失 | 跑 `repatch-codex-windows.ps1 -DryRun` | dry run 通过后跑完整 repatch |
+| 升级后 Fast Mode / 插件 / Goal 消失 | 跑 `repatch-codex-windows.ps1 -DryRun` | 通过后跑完整 repatch |
+| API 接入不确定是否走 Fast Mode | 跑完整 repatch | 查看 wire verification 是否有 `service_tier=priority` |
 | 重启后插件或 Computer Use 又掉 | 跑 `persist-codex-desktop-state.ps1` | 重启 Codex Desktop |
 | Goal 不能设置 | 确认 `[features] goals = true` | 跑持久化脚本并重启 |
 | Chrome 插件安装失败 | 关闭 Codex Desktop | 跑 `persist-codex-desktop-state.ps1 -RepairChromeCache` |
-| `codex plugin list` 报 marketplace snapshot 错误 | 检查 `.agents\plugins\marketplace.json` | 先修 marketplace 布局，再诊断插件 |
+| marketplace snapshot 错误 | 检查 `.agents\plugins\marketplace.json` | 先修 marketplace 布局 |
 | App 启动后自动退出 | 打开 Electron 日志 | 检查 ASAR integrity 或签名问题 |
 
-## 持久化做了什么
+## 持久化脚本做什么
 
-`persist-codex-desktop-state.ps1` 会把容易被重启或升级冲掉的状态重新落盘：
+`persist-codex-desktop-state.ps1` 会把容易被升级或重启冲掉的状态重新落盘：
 
-- 同步当前安装包里的 bundled marketplace 到稳定目录。
-- 维护 `$env:USERPROFILE\.codex\marketplaces\openai-bundled-local`。
+- 维护 `$env:USERPROFILE\.codex\marketplaces\openai-bundled-local` 稳定 marketplace。
 - 安装并启用 `computer-use@openai-bundled-local`。
 - 写入 `[features] computer_use = true` 和 `goals = true`。
 - 写入 `[marketplaces.openai-bundled-local]`。
@@ -76,51 +95,36 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\ski
 只检查不修改：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\persist-codex-desktop-state.ps1" -VerifyOnly
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\persist-codex-desktop-state.ps1" -VerifyOnly
 ```
 
 修复 Chrome 插件缓存占用：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\persist-codex-desktop-state.ps1" -RepairChromeCache
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\persist-codex-desktop-state.ps1" -RepairChromeCache
 ```
 
 ## Computer Use 单独修复
 
-只刷新 Windows Computer Use 兼容文件和环境变量：
+刷新 Windows Computer Use 兼容文件和环境变量：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\install-computer-use-local.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\install-computer-use-local.ps1"
 ```
 
 自动验证并补齐缺失文件：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\install-computer-use-local.ps1" -VerifyOnly
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\install-computer-use-local.ps1" -VerifyOnly
 ```
 
 严格只读验证：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\install-computer-use-local.ps1" -StrictVerifyOnly
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-api-access-repair-plugin\scripts\install-computer-use-local.ps1" -StrictVerifyOnly
 ```
 
-## 常用参数
-
-| 参数 | 用途 |
-| --- | --- |
-| `-DryRun` | 只检查补丁目标，不安装 |
-| `-NoLaunch` | 安装后不启动 Codex Desktop |
-| `-SkipFastVerify` | 跳过 Fast Mode 抓包验证 |
-| `-KeepBuild` | 保留 `Downloads\codex-msix-repack` 方便排错 |
-| `-SkipSdkCleanup` | 不清理临时安装的 Windows SDK |
-| `-RegisterMarketplaceOnly` | 只注册本地 marketplace，不重打补丁 |
-| `-SkipComputerUse` | 跳过 Computer Use 兼容插件安装 |
-| `-RepairChromeCache` | 清理 Chrome 插件安装失败常见的锁定缓存 |
-
 ## 启动即退出排查
-
-如果 Codex Desktop 启动后立刻退出，先抓 Electron 日志：
 
 ```powershell
 $pkg = Get-AppxPackage -Name OpenAI.Codex | Select-Object -First 1
@@ -132,7 +136,7 @@ Pop-Location
 Remove-Item Env:ELECTRON_ENABLE_LOGGING -ErrorAction SilentlyContinue
 ```
 
-看到 ASAR integrity、签名或资源文件错误时，重新走 MSIX repack，不要直接在 WindowsApps 里手改。
+如果看到 ASAR integrity、签名或资源文件错误，重新走 MSIX repack，不要直接手改 WindowsApps。
 
 ## 成功标准
 
@@ -144,10 +148,7 @@ Remove-Item Env:ELECTRON_ENABLE_LOGGING -ErrorAction SilentlyContinue
 - `codex plugin list` 显示 `computer-use@openai-bundled-local (installed, enabled)`。
 - 用户环境变量 `CODEX_ELECTRON_ENABLE_WINDOWS_COMPUTER_USE` 为 `1`。
 - Computer Use helper_transport 能返回屏幕信息或截图。
-- 如果启用了 SDK 清理，`makeappx.exe` 和 `signtool.exe` 不再残留在系统 PATH 可见位置。
 
 ## 本版定位
 
-这个 skill 面向 Windows 上 Codex Desktop 的完整修复与持久化：不仅处理升级后的 MSIX 补丁恢复，也覆盖插件市场、Goal、Computer Use、Chrome 插件缓存和重启后配置丢失等问题。
-
-默认流程会在补丁修复之后继续执行持久化检查，把稳定的 `openai-bundled-local` marketplace、`computer-use@openai-bundled-local`、Goal/Computer Use 功能开关和相关环境变量重新落盘。说明文档也按真实故障现象组织，方便后续直接从“遇到了什么问题”找到对应命令。
+这个 skill 是“Codex API 接入修复插件”：重点是让所有人一眼知道它用于修复 Windows Codex Desktop 的 API 接入、Fast Mode、插件市场、Goal、Computer Use 和插件安装/持久化问题。
