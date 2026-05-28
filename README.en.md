@@ -54,10 +54,8 @@ Repair Chrome plugin cache locks:
 powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\codex-windows-desktop-repair\scripts\persist-codex-desktop-state.ps1" -RepairChromeCache
 ```
 
-## Difference From The Original Fast Patch Skill
+## Project Focus
 
-- It is positioned as a desktop repair and persistence skill, not just a Fast Mode patch.
-- Persistence is part of the default recovery path.
-- It introduces the stable `openai-bundled-local` marketplace strategy.
-- It documents Goal, Computer Use, Chrome cache, plugin install failure, and restart durability issues.
-- The primary documentation is Chinese and organized around user-visible failure symptoms.
+This skill targets complete Codex Desktop repair and persistence on Windows. It covers MSIX patch recovery after upgrades, plugin marketplace repair, Goal, Computer Use, Chrome plugin cache failures, and configuration loss after restarts.
+
+The default workflow treats persistence as part of the repair path. After patching, it verifies and rewrites the stable `openai-bundled-local` marketplace, `computer-use@openai-bundled-local`, Goal/Computer Use feature flags, and the related user environment variable.

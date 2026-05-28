@@ -146,10 +146,8 @@ Remove-Item Env:ELECTRON_ENABLE_LOGGING -ErrorAction SilentlyContinue
 - Computer Use helper_transport 能返回屏幕信息或截图。
 - 如果启用了 SDK 清理，`makeappx.exe` 和 `signtool.exe` 不再残留在系统 PATH 可见位置。
 
-## 和原始 fast-patch 版的区别
+## 本版定位
 
-- 名称和定位改为“桌面修复与持久化”，不只强调 Fast Mode。
-- 默认流程把持久化作为必要步骤，而不是附加说明。
-- 增加 `openai-bundled-local` 稳定 marketplace 策略。
-- 增加 Goal、Chrome 插件缓存、插件安装失败的排障路径。
-- 说明文档中文优先，按真实故障现象组织，而不是按脚本参数堆叠。
+这个 skill 面向 Windows 上 Codex Desktop 的完整修复与持久化：不仅处理升级后的 MSIX 补丁恢复，也覆盖插件市场、Goal、Computer Use、Chrome 插件缓存和重启后配置丢失等问题。
+
+默认流程会在补丁修复之后继续执行持久化检查，把稳定的 `openai-bundled-local` marketplace、`computer-use@openai-bundled-local`、Goal/Computer Use 功能开关和相关环境变量重新落盘。说明文档也按真实故障现象组织，方便后续直接从“遇到了什么问题”找到对应命令。
